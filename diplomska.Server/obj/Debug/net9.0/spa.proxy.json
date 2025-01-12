@@ -1,0 +1,10 @@
+{
+"SpaProxyServer": {
+"ServerUrl": "https://localhost:62785",
+"RedirectUrl": "",
+"LaunchCommand": "npm run dev",
+"WorkingDirectory": "C:\\Users\\Andrej\\Desktop\\faks\\3. Letnik\\diplomska-project\\diplomska.Server\\..\\diplomska.client",
+"MaxTimeoutInSeconds": "120",
+"KeepRunning": "false"
+}
+}

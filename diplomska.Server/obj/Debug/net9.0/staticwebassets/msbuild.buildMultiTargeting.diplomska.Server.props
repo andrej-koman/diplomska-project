@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\diplomska.Server.props" />
+</Project>
