@@ -1,4 +1,4 @@
-@diplomska.Server_HostAddress = http://localhost:5007
+@diplomska.Server_HostAddress = http://localhost:5128
 
 GET {{diplomska.Server_HostAddress}}/weatherforecast/
 Accept: application/json
