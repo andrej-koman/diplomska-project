@@ -1,4 +1,8 @@
 
+using diplomska.Server.Database;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+
 namespace diplomska.Server
 {
     public class Program
@@ -7,7 +11,13 @@ namespace diplomska.Server
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
+            // Add services to the container
+            var dbPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Diplomska", "diplomska.db");
+            Directory.CreateDirectory(Path.GetDirectoryName(dbPath)); // Ensure the directory exists
+            var connectionString = $"Data Source={dbPath};";
+            builder.Services.AddDbContext<DiplomskaDbContext>(options => options.UseSqlite(connectionString));
+            builder.Services.AddAuthorization();
+            builder.Services.AddIdentityApiEndpoints<IdentityUser>().AddEntityFrameworkStores<DiplomskaDbContext>();
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -34,6 +44,7 @@ namespace diplomska.Server
             app.MapControllers();
 
             app.MapFallbackToFile("/index.html");
+            app.MapIdentityApi<IdentityUser>();
 
             app.Run();
         }
