@@ -1,13 +1,27 @@
-import './App.css';
-import { Button } from './components/ui/button';
+import "./App.css";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "./components/ui/button";
 
 function App() {
-    return (
-        <div>
-            <h1 id="tableLabel" className="pb-5">Login</h1>
-            <Button>Log in</Button>
-        </div>
-    );
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Login</CardTitle>
+        <CardDescription>Login in to your account</CardDescription>
+      </CardHeader>
+      <CardContent></CardContent>
+      <CardFooter>
+        <Button>Log in</Button>
+      </CardFooter>
+    </Card>
+  );
 }
 
 export default App;
