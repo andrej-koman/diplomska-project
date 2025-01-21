@@ -1,10 +1,11 @@
 import './App.css';
+import { Button } from './components/ui/button';
 
 function App() {
     return (
         <div>
-            <h1 id="tableLabel">Weather forecast</h1>
-            <p>This component demonstrates fetching data from the server.</p>
+            <h1 id="tableLabel" className="pb-5">Login</h1>
+            <Button>Log in</Button>
         </div>
     );
 }
