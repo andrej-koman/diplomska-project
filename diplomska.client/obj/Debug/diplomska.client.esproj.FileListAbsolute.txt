@@ -1,2 +1,0 @@
-C:/Users/Andrej/Desktop/faks/3. Letnik/diplomska-project/diplomska.client/obj/Debug/diplomska.client.esproj.CoreCompileInputs.cache
-/home/andrej/code/projects/diplomska-project/diplomska.client/obj/Debug/diplomska.client.esproj.CoreCompileInputs.cache

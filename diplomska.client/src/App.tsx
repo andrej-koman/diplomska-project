@@ -1,10 +1,16 @@
-import { LoginForm } from "./components/login-form";
+import { Routes, Route } from "react-router";
+import Home from "./components/pages/home";
+import Login from "./components/pages/login";
 
 function App() {
   return (
     <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">
       <div className="w-full max-w-sm">
-        <LoginForm />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/dashboard" element={<div>Dashboard</div>} />
+        </Routes>
       </div>
     </div>
   );
