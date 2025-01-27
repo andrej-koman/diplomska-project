@@ -13,7 +13,9 @@ namespace diplomska.Server
 
             // Add services to the container
             var dbPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Diplomska", "diplomska.db");
+#pragma warning disable CS8604 // Possible null reference argument.
             Directory.CreateDirectory(Path.GetDirectoryName(dbPath)); // Ensure the directory exists
+#pragma warning restore CS8604 // Possible null reference argument.
             var connectionString = $"Data Source={dbPath};";
             builder.Services.AddDbContext<DiplomskaDbContext>(options => options.UseSqlite(connectionString));
             builder.Services.AddAuthorization();
