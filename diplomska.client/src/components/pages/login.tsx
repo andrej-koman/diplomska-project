@@ -1,6 +1,9 @@
 import { LoginForm } from "../login-form";
+import { useState } from "react";
 
 export default function Login() {
+  const [error, setError] = useState<string | null>(null);
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const form = e.currentTarget;
@@ -34,13 +37,13 @@ export default function Login() {
     } catch (error) {
       // show error message
       console.error(error);
+      setError("Prijava ni uspela. Poskusite ponovno.");
+      submitButton?.removeAttribute("disabled");
     }
   };
   return (
     <>
-      <LoginForm
-        formOnSubmit={handleSubmit}
-      />
+      <LoginForm formOnSubmit={handleSubmit} error={error} />
     </>
   );
 }

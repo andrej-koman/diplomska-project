@@ -12,10 +12,12 @@ import { Label } from "@/components/ui/label";
 
 export function LoginForm({
   formOnSubmit,
+  error,
   className,
   ...props
 }: {
   formOnSubmit: (e: React.FormEvent<HTMLFormElement>) => Promise<void>;
+  error: string | null;
 } & React.ComponentPropsWithoutRef<"div">) {
   return (
     <div className={cn("flex flex-col gap-6 w-[350px]", className)} {...props}>
@@ -47,6 +49,7 @@ export function LoginForm({
               </Button>
             </div>
           </form>
+          {error && <p className="text-red-500 text-sm mt-3">{error}</p>}
         </CardContent>
       </Card>
     </div>
