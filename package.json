@@ -1,0 +1,11 @@
+{
+  "name": "diplomska-project",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev:server": "cd diplomska.Server && dotnet run"
+  },
+  "author": "",
+  "license": "ISC"
+}
