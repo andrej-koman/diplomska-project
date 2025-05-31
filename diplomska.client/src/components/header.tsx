@@ -9,43 +9,29 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-
-interface UserData {
-  email?: string;
-}
+import { useUser } from "@/contexts/UserContext";
 
 export default function Header() {
   const [logoutError, setLogoutError] = useState<string | null>(null);
-  const [userData, setUserData] = useState<UserData | null>(null);
-  const [isLoadingUserData, setIsLoadingUserData] = useState<boolean>(true);
-  const [fetchUserDataError, setFetchUserDataError] = useState<string | null>(null);
+  const {
+    user,
+    isLoading: isLoadingUserData,
+    error: fetchUserDataError,
+    logout: contextLogout,
+    fetchUser,
+  } = useUser();
 
   useEffect(() => {
-    const fetchUserData = async () => {
-      setIsLoadingUserData(true);
-      setFetchUserDataError(null);
-      try {
-        const response = await fetch("/api/Auth/userdata");
-        if (!response.ok) {
-          if (response.status === 401) {
-            // Unauthorized, redirect to login
-            window.location.href = "/login";
-            return;
-          }
-          throw new Error(`Failed to fetch user data: ${response.statusText}`);
-        }
-        const data: UserData = await response.json();
-        setUserData(data);
-      } catch (error) {
-        console.error("Error fetching user data:", error);
-        setFetchUserDataError("Napaka pri nalaganju podatkov uporabnika.");
-      } finally {
-        setIsLoadingUserData(false);
+    if ((!user && !fetchUserDataError) || fetchUserDataError) {
+      if (fetchUser) {
+        fetchUser();
       }
-    };
-
-    fetchUserData();
-  }, []);
+    }
+    if (!isLoadingUserData && !user && !fetchUserDataError) {
+      if (window.location.pathname !== "/login") {
+      }
+    }
+  }, [user, isLoadingUserData, fetchUserDataError, fetchUser]);
 
   const handleLogout = async () => {
     setLogoutError(null);
@@ -61,8 +47,8 @@ export default function Header() {
         throw new Error("Logout failed");
       }
 
-      // redirect to login page
       window.location.href = "/login";
+      contextLogout();
     } catch (error) {
       console.error(error);
       setLogoutError("Odjava ni uspela. Poskusite ponovno.");
@@ -71,7 +57,6 @@ export default function Header() {
 
   const handleSettings = () => {
     console.log("Settings clicked");
-    // window.location.href = "/settings";
   };
 
   const getInitials = (email?: string) => {
@@ -87,43 +72,65 @@ export default function Header() {
           <p>Nalaganje...</p>
         ) : fetchUserDataError ? (
           <p className="text-red-500 text-sm">{fetchUserDataError}</p>
-        ) : userData ? (
+        ) : user ? (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="relative h-10 w-10 rounded-full p-0">
+              <Button
+                variant="ghost"
+                className="relative h-10 w-10 rounded-full p-0"
+              >
                 <Avatar className="h-10 w-10">
-                  {/* <AvatarImage src={userData.avatarUrl} alt={userData.userName || "User"} /> */}
-                  <AvatarFallback>{getInitials(userData.email)}</AvatarFallback>
+                  <AvatarFallback>{getInitials(user.email)}</AvatarFallback>
                 </Avatar>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56 bg-white text-black" align="end" forceMount>
+            <DropdownMenuContent
+              className="w-56 bg-white text-black"
+              align="end"
+              forceMount
+            >
               <DropdownMenuLabel className="font-normal">
                 <div className="flex flex-col space-y-1 p-2">
                   <p className="text-sm font-medium leading-none">
-                    {userData.email || "Brez e-pošte"}
+                    {user.userName || user.email || "Uporabnik"}
                   </p>
-                  <p className="text-xs leading-none text-gray-500">
-                  </p>
+                  {user.userName && user.email && (
+                    <p className="text-xs leading-none text-gray-500">
+                      {user.email}
+                    </p>
+                  )}
                 </div>
               </DropdownMenuLabel>
-              <DropdownMenuSeparator className="bg-gray-200"/>
-              <DropdownMenuItem onClick={handleSettings} className="hover:bg-gray-100 p-2 cursor-pointer">
+              <DropdownMenuSeparator className="bg-gray-200" />
+              <DropdownMenuItem
+                onClick={handleSettings}
+                className="hover:bg-gray-100 p-2 cursor-pointer"
+              >
                 Nastavitve
               </DropdownMenuItem>
-              <DropdownMenuSeparator className="bg-gray-200"/>
-              <DropdownMenuItem onClick={handleLogout} className="hover:bg-gray-100 p-2 cursor-pointer">
+              <DropdownMenuSeparator className="bg-gray-200" />
+              <DropdownMenuItem
+                onClick={handleLogout}
+                className="hover:bg-gray-100 p-2 cursor-pointer"
+              >
                 Odjava
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         ) : (
-          // Fallback if user data is null and not loading/error (e.g. if redirected before 401)
-          <Button onClick={() => window.location.href = "/login"} variant="outline" className="text-white border-white hover:bg-white hover:text-black">
+          <Button
+            onClick={() => (window.location.href = "/login")}
+            variant="outline"
+            className="text-white border-white hover:bg-white hover:text-black"
+          >
             Prijava
           </Button>
         )}
-        {logoutError && <p className="text-red-500 text-sm mt-1 fixed right-4 bottom-4">{logoutError}</p>}
+        {logoutError && (
+          <p className="text-red-500 text-sm mt-1 fixed right-4 bottom-4">
+            {logoutError}
+          </p>
+        )}
       </div>
     </header>
   );
