@@ -1,27 +1,56 @@
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
+using Microsoft.Extensions.Logging;
+using System.Threading.Tasks;
 
-namespace MyApp.Namespace
+namespace diplomska.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     public class AuthController : ControllerBase
     {
         private readonly ILogger<AuthController> _logger;
+        private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public AuthController(ILogger<AuthController> logger)
+        public AuthController(
+            ILogger<AuthController> logger,
+            SignInManager<IdentityUser> signInManager,
+            UserManager<IdentityUser> userManager)
         {
             _logger = logger;
+            _signInManager = signInManager;
+            _userManager = userManager;
         }
 
-        // Add a get method called "userdata" that returns the user's data
         [HttpGet("userdata")]
         [Authorize]
-        public string UserData()
+        public async Task<IActionResult> UserData()
         {
-            // Return response with "test" as the body
-            return JsonConvert.SerializeObject(new { test = "test" });
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return NotFound(new { message = "User not found." });
+            }
+
+            return Ok(new
+            {
+                userId = user.Id,
+                userName = user.UserName,
+                email = user.Email,
+                emailConfirmed = user.EmailConfirmed,
+                phoneNumber = user.PhoneNumber
+            });
+        }
+
+        [HttpPost("logout")]
+        [Authorize]
+        public async Task<IActionResult> Logout()
+        {
+            await _signInManager.SignOutAsync();
+            _logger.LogInformation("User logged out successfully.");
+            return Ok(new { message = "Logged out successfully" });
         }
     }
 }

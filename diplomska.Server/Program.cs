@@ -1,4 +1,3 @@
-
 using diplomska.Server.Database;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -13,6 +12,7 @@ namespace diplomska.Server
 
             // Add services to the container
             var dbPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Diplomska", "diplomska.db");
+            Console.WriteLine($"Database path: {dbPath}");
 #pragma warning disable CS8604 // Possible null reference argument.
             Directory.CreateDirectory(Path.GetDirectoryName(dbPath)); // Ensure the directory exists
 #pragma warning restore CS8604 // Possible null reference argument.

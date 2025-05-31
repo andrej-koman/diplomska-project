@@ -17,6 +17,14 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+body {
+  cursor: default;
+  user-select: none;
+  -webkit-user-select: none; /* For Safari */
+  -moz-user-select: none;    /* For Firefox */
+  -ms-user-select: none;     /* For Internet Explorer/Edge */
+}
+
 a {
   font-weight: 500;
   color: #646cff;
@@ -105,6 +113,6 @@ h1 {
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground cursor-default select-none;
   }
 }
