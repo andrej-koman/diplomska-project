@@ -33,7 +33,7 @@ export default function Login() {
       }
 
       // redirect to dashboard
-      window.location.href = "/dashboard";
+      window.location.href = "/";
     } catch (error) {
       // show error message
       console.error(error);

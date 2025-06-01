@@ -1,7 +1,6 @@
 import { Routes, Route, Navigate } from "react-router";
 import Home from "./components/pages/home";
-import Dashboard from "./components/pages/dashboard";
-import Login from "./components/pages/login"; // Ensure you have this component for the login form
+import Login from "./components/pages/login";
 import { useUser } from "./contexts/UserContext";
 
 function App() {
@@ -21,7 +20,7 @@ function App() {
         <Routes>
           <Route
             path="/"
-            element={user ? <Dashboard /> : <Home />}
+            element={user ? <Home /> : <Navigate to="/login" replace />}
           />
           <Route
             path="/login"
