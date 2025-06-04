@@ -13,6 +13,8 @@ export interface UserData {
   emailConfirmed?: boolean;
   phoneNumber?: string;
   twoFactorEnabled?: boolean;
+  emailTwoFactorEnabled?: boolean;
+  authenticatorTwoFactorEnabled?: boolean;
 }
 
 interface UserContextType {
@@ -23,6 +25,7 @@ interface UserContextType {
   logout: () => void;
   fetchUser: () => Promise<void>;
   toggle2FA: (enable: boolean) => Promise<boolean>;
+  toggleEmailTwoFactor: (enable: boolean) => Promise<boolean>;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -94,6 +97,38 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const toggleEmailTwoFactor = async (enable: boolean): Promise<boolean> => {
+    try {
+      const response = await fetch("/api/Auth/toggle-email-2fa", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ enable }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setUser((prev) =>
+          prev ? { ...prev, emailTwoFactorEnabled: data.emailTwoFactorEnabled } : null
+        );
+        return true;
+      } else {
+        const errorText = await response.text();
+        console.error(
+          "Failed to toggle email 2FA:",
+          response.status,
+          response.statusText,
+          errorText
+        );
+        return false;
+      }
+    } catch (e: unknown) {
+      console.error("Error toggling email 2FA:", e);
+      return false;
+    }
+  };
+
   useEffect(() => {
     fetchUser();
   }, []);
@@ -109,7 +144,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <UserContext.Provider
-      value={{ user, isLoading, error, login, logout, fetchUser, toggle2FA }}
+      value={{ user, isLoading, error, login, logout, fetchUser, toggle2FA, toggleEmailTwoFactor }}
     >
       {children}
     </UserContext.Provider>

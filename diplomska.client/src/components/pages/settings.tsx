@@ -12,8 +12,9 @@ import Header from "../header";
 import { useToast } from "@/hooks/use-toast";
 
 export default function Settings() {
-  const { user, toggle2FA } = useUser();
+  const { user, toggle2FA, toggleEmailTwoFactor } = useUser();
   const [isToggling, setIsToggling] = useState(false);
+  const [isTogglingEmail, setIsTogglingEmail] = useState(false);
   const { toast } = useToast();
 
   const handle2FAToggle = async () => {
@@ -45,6 +46,35 @@ export default function Settings() {
     setIsToggling(false);
   };
 
+  const handleEmailTwoFactorToggle = async () => {
+    if (!user) return;
+
+    setIsTogglingEmail(true);
+
+    const newState = !user.emailTwoFactorEnabled;
+    const success = await toggleEmailTwoFactor(newState);
+
+    if (success) {
+      toast({
+        title: `Email 2FA ${newState ? "omogočena" : "onemogočena"} uspešno.`,
+        description: `Vaša nastavitev email dvojne avtentikacije je bila ${
+          newState ? "omogočena" : "onemogočena"
+        }.`,
+        duration: 5000,
+        variant: "default",
+      });
+    } else {
+      toast({
+        title: "Napaka",
+        description: `Email dvojna avtentikacija ni uspela.`,
+        duration: 5000,
+        variant: "destructive",
+      });
+    }
+
+    setIsTogglingEmail(false);
+  };
+
   return (
     <div className="flex flex-col justify-center items-center gap-6 w-[500px]">
       <Header />
@@ -72,6 +102,39 @@ export default function Settings() {
                 disabled={isToggling}
               />
             </div>
+
+            {/* 2FA Methods - only show when 2FA is enabled */}
+            {user?.twoFactorEnabled && (
+              <div className="ml-4 space-y-3 border-l-2 border-gray-200 pl-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h4 className="text-sm font-medium">Email</h4>
+                    <p className="text-xs text-muted-foreground">
+                      Prejemajte kode preko e-pošte
+                    </p>
+                  </div>
+                  <Switch
+                    checked={user?.emailTwoFactorEnabled || false}
+                    onCheckedChange={handleEmailTwoFactorToggle}
+                    disabled={isTogglingEmail}
+                  />
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h4 className="text-sm font-medium">Aplikacija za avtentikacijo</h4>
+                    <p className="text-xs text-muted-foreground">
+                      Uporabite aplikacijo kot Google Authenticator
+                    </p>
+                  </div>
+                  <Switch
+                    checked={false} // TODO: Connect to actual state
+                    onCheckedChange={() => {}} // TODO: Add logic
+                    disabled={false}
+                  />
+                </div>
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>

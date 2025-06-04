@@ -1,4 +1,6 @@
 using diplomska.Server.Database;
+using diplomska.Server.Models;
+using diplomska.Server.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -19,7 +21,14 @@ namespace diplomska.Server
             var connectionString = $"Data Source={dbPath};";
             builder.Services.AddDbContext<DiplomskaDbContext>(options => options.UseSqlite(connectionString));
             builder.Services.AddAuthorization();
-            builder.Services.AddIdentityApiEndpoints<IdentityUser>().AddEntityFrameworkStores<DiplomskaDbContext>();
+            builder.Services.AddIdentityApiEndpoints<ApplicationUser>().AddEntityFrameworkStores<DiplomskaDbContext>();
+
+            // Configure email settings
+            builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
+            
+            // Register services
+            builder.Services.AddScoped<IEmailService, EmailService>();
+            builder.Services.AddSingleton<TwoFactorCodeService>();
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -47,7 +56,7 @@ namespace diplomska.Server
             app.MapControllers();
 
             app.MapFallbackToFile("/index.html");
-            app.MapIdentityApi<IdentityUser>();
+            app.MapIdentityApi<ApplicationUser>();
 
             app.Run();
         }
