@@ -23,7 +23,6 @@ namespace diplomska.Server.Controllers
             _signInManager = signInManager;
             _userManager = userManager;
         }
-
         [HttpGet("userdata")]
         [Authorize]
         public async Task<IActionResult> UserData()
@@ -31,7 +30,7 @@ namespace diplomska.Server.Controllers
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
-                return NotFound(new { message = "User not found." });
+                return NotFound(new { message = "Uporabnik ni najden." });
             }
 
             return Ok(new
@@ -40,17 +39,44 @@ namespace diplomska.Server.Controllers
                 userName = user.UserName,
                 email = user.Email,
                 emailConfirmed = user.EmailConfirmed,
-                phoneNumber = user.PhoneNumber
+                phoneNumber = user.PhoneNumber,
+                twoFactorEnabled = user.TwoFactorEnabled
             });
         }
+        [HttpPost("toggle-2fa")]
+        [Authorize]
+        public async Task<IActionResult> Toggle2FA([FromBody] Toggle2FARequest request)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return NotFound(new { message = "Uporabnik ni najden." });
+            }
+            var result = await _userManager.SetTwoFactorEnabledAsync(user, request.Enable);
+            if (result.Succeeded)
+            {
+                _logger.LogInformation($"User {user.Email} {(request.Enable ? "enabled" : "disabled")} 2FA.");
+                return Ok(new
+                {
+                    message = $"2FA {(request.Enable ? "omogočena" : "onemogočena")} uspešno.",
+                    twoFactorEnabled = request.Enable
+                });
+            }
 
+            return BadRequest(new { message = "Posodabljanje 2FA nastavitve ni uspelo.", errors = result.Errors });
+        }
         [HttpPost("logout")]
         [Authorize]
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();
             _logger.LogInformation("User logged out successfully.");
-            return Ok(new { message = "Logged out successfully" });
+            return Ok(new { message = "Odjava uspešna" });
         }
+    }
+
+    public class Toggle2FARequest
+    {
+        public bool Enable { get; set; }
     }
 }

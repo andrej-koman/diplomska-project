@@ -13,11 +13,9 @@ export default function Login() {
       password: form.password.value,
     };
 
-    // disable submit button
     const submitButton = form.querySelector("button[type=submit]");
     submitButton?.setAttribute("disabled", "true");
 
-    // send login request
     try {
       const response = await fetch("/login?useCookies=true", {
         method: "POST",
@@ -32,10 +30,8 @@ export default function Login() {
         throw new Error("Login failed");
       }
 
-      // redirect to dashboard
       window.location.href = "/";
     } catch (error) {
-      // show error message
       console.error(error);
       setError("Prijava ni uspela. Poskusite ponovno.");
       submitButton?.removeAttribute("disabled");

@@ -29,6 +29,7 @@ export default function Header() {
     }
     if (!isLoadingUserData && !user && !fetchUserDataError) {
       if (window.location.pathname !== "/login") {
+        /* empty */
       }
     }
   }, [user, isLoadingUserData, fetchUserDataError, fetchUser]);
@@ -56,7 +57,7 @@ export default function Header() {
   };
 
   const handleSettings = () => {
-    console.log("Settings clicked");
+    window.location.href = "/settings";
   };
 
   const getInitials = (email?: string) => {
@@ -66,7 +67,9 @@ export default function Header() {
 
   return (
     <header className="fixed top-0 left-0 right-0 flex justify-between items-center p-4 w-full z-50">
-      <h1 className="text-xl font-bold">Diplomska</h1>
+      <a className="text-xl font-bold text-white" href="/">
+        Diplomska
+      </a>
       <div>
         {isLoadingUserData ? (
           <p>Nalaganje...</p>

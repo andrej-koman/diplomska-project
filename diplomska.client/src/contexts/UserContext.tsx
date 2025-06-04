@@ -12,6 +12,7 @@ export interface UserData {
   email?: string;
   emailConfirmed?: boolean;
   phoneNumber?: string;
+  twoFactorEnabled?: boolean;
 }
 
 interface UserContextType {
@@ -21,6 +22,7 @@ interface UserContextType {
   login: (userData: UserData) => void;
   logout: () => void;
   fetchUser: () => Promise<void>;
+  toggle2FA: (enable: boolean) => Promise<boolean>;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -43,14 +45,52 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       } else {
         const errorData = await response.text();
         console.error("Failed to fetch user data:", response.status, errorData);
-        throw new Error(`Failed to fetch user data: ${response.statusText}`);
+        throw new Error(
+          `Napaka pri pridobivanju uporabniških podatkov: ${response.statusText}`
+        );
       }
-    } catch (e: any) {
+    } catch (e: unknown) {
       console.error("Error fetching user data:", e);
-      setError(e.message || "Failed to load user data.");
+      if (e instanceof Error) {
+        setError(e.message);
+      } else {
+        setError("Napaka pri nalaganju uporabniških podatkov.");
+      }
       setUser(null);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const toggle2FA = async (enable: boolean): Promise<boolean> => {
+    try {
+      const response = await fetch("/api/Auth/toggle-2fa", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ enable }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setUser((prev) =>
+          prev ? { ...prev, twoFactorEnabled: data.twoFactorEnabled } : null
+        );
+        return true;
+      } else {
+        const errorText = await response.text();
+        console.error(
+          "Failed to toggle 2FA:",
+          response.status,
+          response.statusText,
+          errorText
+        );
+        return false;
+      }
+    } catch (e: unknown) {
+      console.error("Error toggling 2FA:", e);
+      return false;
     }
   };
 
@@ -69,7 +109,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <UserContext.Provider
-      value={{ user, isLoading, error, login, logout, fetchUser }}
+      value={{ user, isLoading, error, login, logout, fetchUser, toggle2FA }}
     >
       {children}
     </UserContext.Provider>

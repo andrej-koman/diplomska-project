@@ -40,6 +40,7 @@ namespace diplomska.Server
 
             app.UseHttpsRedirection();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
 

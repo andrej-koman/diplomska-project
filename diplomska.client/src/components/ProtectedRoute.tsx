@@ -1,6 +1,6 @@
-import React from 'react';
-import { Navigate, Outlet } from 'react-router';
-import { useUser } from '@/contexts/UserContext';
+import React from "react";
+import { Navigate, Outlet } from "react-router";
+import { useUser } from "@/contexts/UserContext";
 
 interface ProtectedRouteProps {
   children?: React.ReactNode;

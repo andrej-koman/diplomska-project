@@ -1,7 +1,9 @@
 import { Routes, Route, Navigate } from "react-router";
 import Home from "./components/pages/home";
 import Login from "./components/pages/login";
+import Settings from "./components/pages/settings";
 import { useUser } from "./contexts/UserContext";
+import { Toaster } from "./components/ui/toaster";
 
 function App() {
   const { user, isLoading } = useUser();
@@ -26,8 +28,13 @@ function App() {
             path="/login"
             element={user ? <Navigate to="/" replace /> : <Login />}
           />
+          <Route
+            path="/settings"
+            element={user ? <Settings /> : <Navigate to="/login" replace />}
+          />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
+        <Toaster />
       </div>
     </div>
   );
