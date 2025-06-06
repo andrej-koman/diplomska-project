@@ -2,6 +2,7 @@ import { Routes, Route, Navigate } from "react-router";
 import Home from "./components/pages/home";
 import Login from "./components/pages/login";
 import Settings from "./components/pages/settings";
+import Email2FA from "./components/pages/email-2fa";
 import { useUser } from "./contexts/UserContext";
 import { Toaster } from "./components/ui/toaster";
 
@@ -27,6 +28,10 @@ function App() {
           <Route
             path="/login"
             element={user ? <Navigate to="/" replace /> : <Login />}
+          />
+          <Route
+            path="/email-2fa"
+            element={user ? <Navigate to="/" replace /> : <Email2FA />}
           />
           <Route
             path="/settings"

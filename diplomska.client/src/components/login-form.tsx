@@ -35,6 +35,7 @@ export function LoginForm({
                 <Label htmlFor="email">Email</Label>
                 <Input
                   id="email"
+                  name="email"
                   type="email"
                   placeholder="p@primer.si"
                   required
@@ -42,7 +43,23 @@ export function LoginForm({
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="password">Geslo</Label>
-                <Input id="password" type="password" required />
+                <Input 
+                  id="password" 
+                  name="password"
+                  type="password" 
+                  required 
+                />
+              </div>
+              <div className="flex items-center space-x-2">
+                <input
+                  id="rememberMe"
+                  name="rememberMe"
+                  type="checkbox"
+                  className="h-4 w-4 rounded border-gray-300"
+                />
+                <Label htmlFor="rememberMe" className="text-sm">
+                  Zapomni si me
+                </Label>
               </div>
               <Button type="submit" className="w-full">
                 Prijava
